@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Limonada Nada</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@100;300;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Hero: 3 copos -->
+  <div class="content-layer" id="content-layer">
+    <div class="fixed-layer">
+      <img class="hero-img" src="3_copos.png" alt="Limonadas">
+    </div>
+    <div class="text-layer">
+      <div class="main-line" id="main-line">
+        <span id="limo">LIMO</span><span id="nada"><span class="nada-letter">N</span><span class="nada-letter">A</span><span class="nada-letter">D</span><span class="nada-letter">A</span></span>
+      </div>
+      <div class="subtitle-line" id="subtitle-line">
+        <span class="sub-word sub-thin">TODO</span> <span class="sub-word sub-thin">O</span> <span class="sub-word sub-thin">SABOR.</span> <span class="sub-word sub-bold">NADA</span> <span class="sub-word sub-bold">DE</span> <span class="sub-word sub-bold">AÇÚCAR</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Logo H3 -->
+  <img id="logo-h3" class="logo-h3" src="logo-h3.svg" alt="H3">
+
+  <!-- LIMÃO -->
+  <div class="product-layer" id="limao-layer" style="z-index:15">
+    <img src="limao.png" alt="Limonada de Limão">
+  </div>
+  <div class="product-text-layer" id="limao-text-layer">
+    <div class="product-text-wrapper">
+      <div class="product-pre"><span class="pw pw-bold">LIMO</span><span class="pw-thin"><span class="pw nada-letter-limao">N</span><span class="pw nada-letter-limao">A</span><span class="pw nada-letter-limao">D</span><span class="pw nada-letter-limao">A</span></span> <span class="pw pw-bold">H3</span> <span class="pw pw-bold">DE</span></div>
+      <div class="pw product-name">LIMÃO</div>
+      <div class="product-post"><span class="pw pw-thin">TODO</span> <span class="pw pw-thin">O</span> <span class="pw pw-thin">SABOR.</span> <span class="pw pw-bold">NADA</span> <span class="pw pw-bold">DE</span> <span class="pw pw-bold">AÇÚCAR</span></div>
+      <div class="product-kcal" id="limao-kcal" style="color:#e8b000">1 copo = 23,1 kcal e 0 g açúcar</div>
+    </div>
+  </div>
+
+  <!-- MORANGO -->
+  <div class="product-layer" id="morango-layer" style="z-index:16">
+    <img src="morango.png" alt="Limonada de Morango">
+  </div>
+  <div class="product-text-layer" id="morango-text-layer">
+    <div class="product-text-wrapper">
+      <div class="product-pre"><span class="pw pw-bold">LIMO</span><span class="pw-thin"><span class="pw nada-letter-morango">N</span><span class="pw nada-letter-morango">A</span><span class="pw nada-letter-morango">D</span><span class="pw nada-letter-morango">A</span></span> <span class="pw pw-bold">H3</span> <span class="pw pw-bold">DE</span></div>
+      <div class="pw product-name">MORANGO</div>
+      <div class="product-post"><span class="pw pw-thin">TODO</span> <span class="pw pw-thin">O</span> <span class="pw pw-thin">SABOR.</span> <span class="pw pw-bold">NADA</span> <span class="pw pw-bold">DE</span> <span class="pw pw-bold">AÇÚCAR</span></div>
+      <div class="product-kcal" id="morango-kcal" style="color:#d94452">1 copo = 23,1 kcal e 0 g açúcar</div>
+    </div>
+  </div>
+
+  <!-- MARACUJÁ -->
+  <div class="product-layer" id="maracuja-layer" style="z-index:17">
+    <img src="maracuja.png" alt="Limonada de Maracujá">
+  </div>
+  <div class="product-text-layer" id="maracuja-text-layer">
+    <div class="product-text-wrapper">
+      <div class="product-pre"><span class="pw pw-bold">LIMO</span><span class="pw-thin"><span class="pw nada-letter-maracuja">N</span><span class="pw nada-letter-maracuja">A</span><span class="pw nada-letter-maracuja">D</span><span class="pw nada-letter-maracuja">A</span></span> <span class="pw pw-bold">H3</span> <span class="pw pw-bold">DE</span></div>
+      <div class="pw product-name">MARACUJÁ</div>
+      <div class="product-post"><span class="pw pw-thin">TODO</span> <span class="pw pw-thin">O</span> <span class="pw pw-thin">SABOR.</span> <span class="pw pw-bold">NADA</span> <span class="pw pw-bold">DE</span> <span class="pw pw-bold">AÇÚCAR</span></div>
+      <div class="product-kcal" id="maracuja-kcal" style="color:#6b2fa0">1 copo = 23,1 kcal e 0 g açúcar</div>
+    </div>
+  </div>
+
+  <!-- FINAL: 3 copos -->
+  <div class="product-layer" id="final-layer" style="z-index:18">
+    <img src="3_copos.png" alt="Limonadas H3">
+  </div>
+  <div class="product-text-layer" id="final-text-layer">
+    <div class="product-text-wrapper">
+      <div class="product-name"><span class="pw" style="font-weight:700">LIMO</span><span style="font-weight:100"><span class="pw nada-letter-final">N</span><span class="pw nada-letter-final">A</span><span class="pw nada-letter-final">D</span><span class="pw nada-letter-final">A</span></span></div>
+      <div class="product-post"><span class="pw pw-thin">TODO</span> <span class="pw pw-thin">O</span> <span class="pw pw-thin">SABOR.</span> <span class="pw pw-bold">NADA</span> <span class="pw pw-bold">DE</span> <span class="pw pw-bold">AÇÚCAR</span></div>
+      <div class="product-kcal" id="final-kcal" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- Dark overlay (mobile only, for reconheça) -->
+  <div id="mobile-overlay" class="mobile-overlay"></div>
+
+  <!-- RECONHEÇA -->
+  <div class="reconheca-layer">
+    <div style="text-align: center;">
+      <div class="reconheca-sub">
+        <span class="sub-word2 sub-thin" id="re">RE</span><span class="sub-word2 sub-bold" id="conheca">CONHEÇA</span>
+        <br>
+        <span class="sub-word2 sub-bold">AS</span> <span class="sub-word2 sub-bold">LIMONADAS</span> <span class="sub-word2 sub-bold">H3</span>
+        <br>
+        <span class="sub-word2 sub-bold">ADOÇADAS</span> <span class="sub-word2 sub-bold">COM</span> <span class="sub-word2 sub-bold">STEVIA</span>
+      </div>
+      <div class="stevia-points" id="stevia-points">
+        um adoçante 100% natural, <br class="mobile-br">com zero calorias <br class="mobile-br">e seguro para diabéticos
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll indicator: mouse (desktop) / pointer (mobile) -->
+  <div id="scroll-hint" style="position:fixed;bottom:40px;left:50%;transform:translateX(-50%);z-index:30;opacity:0;pointer-events:none;">
+    <svg class="hint-mouse" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="5" y="2" width="14" height="20" rx="7"/>
+      <path d="M12 6v4"/>
+    </svg>
+    <svg class="hint-pointer" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M22 14a8 8 0 0 1-8 8"/>
+      <path d="M18 11v-1a2 2 0 0 0-2-2a2 2 0 0 0-2 2"/>
+      <path d="M14 10V9a2 2 0 0 0-2-2a2 2 0 0 0-2 2v1"/>
+      <path d="M10 9.5V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v10"/>
+      <path d="M18 11a2 2 0 1 1 4 0v3a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 16"/>
+    </svg>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
