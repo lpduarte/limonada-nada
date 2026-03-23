@@ -191,12 +191,20 @@ html, body {
   color: white;
   text-transform: uppercase;
   text-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  overflow: visible;
+}
+
+.product-text-wrapper * {
+  overflow: visible;
 }
 
 .product-pre {
   font-size: 5.8vw;
   line-height: 1.2;
   margin-bottom: 70px;
+  will-change: transform;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
 }
 
 .pw {
@@ -212,6 +220,11 @@ html, body {
   font-size: 17vw;
   font-weight: 700;
   line-height: 1;
+  padding-top: 0.25em;
+  margin-top: -0.25em;
+  will-change: transform;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
 }
 
 .product-post {
