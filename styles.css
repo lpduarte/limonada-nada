@@ -36,6 +36,7 @@ html, body {
   height: 100vh;
   width: auto;
   object-fit: contain;
+  will-change: transform;
 }
 
 .text-layer {
@@ -74,42 +75,28 @@ html, body {
   color: white;
   text-transform: uppercase;
   line-height: 1;
-  font-size: 5.4vw;
+  font-size: 4.5vw;
 }
 
 #limo {
-  font-weight: 700;
+  font-weight: 100;
   opacity: 0;
   filter: blur(30px);
 }
 
 #nada {
-  font-weight: 100;
-}
-
-.nada-letter {
+  font-weight: 700;
   opacity: 0;
   filter: blur(30px);
-  display: inline-block;
 }
 
-.sub-word {
+.sub-group {
   opacity: 0;
   filter: blur(30px);
 }
 
 .sub-thin { font-weight: 300; }
 .sub-bold { font-weight: 700; }
-
-.logo-h3 {
-  position: fixed;
-  bottom: 40px;
-  right: 40px;
-  width: 125px;
-  height: 125px;
-  z-index: 35;
-  opacity: 0;
-}
 
 /* RECONHEÇA layer */
 .reconheca-layer {
@@ -143,13 +130,259 @@ html, body {
   font-weight: 300;
   margin-top: 30px;
   letter-spacing: 0.05em;
+  max-width: 70vw;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
   opacity: 0;
   filter: blur(30px);
 }
 
-.sub-word2 {
+.reconheca-line {
   opacity: 0;
   filter: blur(30px);
+}
+
+/* Stevia link */
+.stevia-link-wrap {
+  position: relative;
+  display: inline;
+}
+
+.stevia-link {
+  color: white;
+  text-decoration: none;
+  cursor: pointer;
+  font-weight: 300;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  vertical-align: baseline;
+  transition: font-weight 0.5s ease;
+}
+
+/* Reserve bold width so layout doesn't shift */
+.stevia-link::after {
+  content: attr(data-text);
+  font-weight: 700;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  pointer-events: none;
+  display: block;
+}
+
+.stevia-link:hover,
+.stevia-link-wrap:hover .stevia-link {
+  font-weight: 700;
+}
+
+/* Hand-drawn underline */
+.stevia-link-underline {
+  display: block;
+  width: 100%;
+  height: 4px;
+  margin-top: -5px;
+}
+
+.stevia-link-underline path {
+  stroke: white;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  fill: none;
+}
+
+.stevia-hint {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 50%;
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  opacity: 0;
+  filter: blur(10px);
+  cursor: pointer;
+}
+
+
+.stevia-hint-text {
+  font-family: 'Caveat', cursive;
+  font-size: 1.2em;
+  color: white;
+  white-space: nowrap;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.stevia-arrow {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* Stevia detail panel */
+.stevia-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 21;
+  opacity: 0;
+}
+
+.stevia-panel-content {
+  max-width: 60vw;
+  max-height: 80vh;
+  overflow-y: auto;
+  text-align: center;
+}
+
+.stevia-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3em;
+  margin-bottom: 0.5em;
+}
+
+.stevia-leaf-left {
+  margin-right: 0.2em;
+}
+
+.stevia-title {
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 5.8vw;
+  font-weight: 700;
+  color: white;
+  text-transform: uppercase;
+  line-height: 1;
+  letter-spacing: 0.05em;
+}
+
+.stevia-leaf {
+  height: 1em;
+  width: auto;
+  font-size: 5.8vw;
+}
+
+.stevia-desc {
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 1.4vw;
+  font-weight: 300;
+  color: white;
+  line-height: 1.7;
+  margin-bottom: 2em;
+  letter-spacing: 0.02em;
+  text-wrap: balance;
+}
+
+.stevia-desc em {
+  font-style: italic;
+}
+
+.stevia-desc strong {
+  font-weight: 700;
+}
+
+.stevia-table {
+  display: flex;
+  flex-wrap: wrap;
+  text-align: left;
+  border: 2px solid white;
+  border-radius: 16px;
+}
+
+.stevia-table-col {
+  flex: 1;
+  padding: 2em 2.5em;
+  text-align: center;
+}
+
+.stevia-table-col:first-child {
+  border-right: 2px solid white;
+}
+
+.stevia-table-footer {
+  width: 100%;
+  border-top: 2px solid white;
+  padding: 1.2em 2.5em;
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 1.4vw;
+  font-weight: 300;
+  color: white;
+  text-align: center;
+  text-transform: none;
+}
+
+.stevia-subtitle {
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 2.2vw;
+  font-weight: 700;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0;
+  margin-bottom: 0.8em;
+}
+
+.stevia-col-text {
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 1.4vw;
+  font-weight: 300;
+  color: white;
+  line-height: 1.7;
+  letter-spacing: 0;
+  text-wrap: balance;
+}
+
+.stevia-col-text strong {
+  font-weight: 700;
+}
+
+.stevia-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.stevia-list li {
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 1.4vw;
+  font-weight: 300;
+  color: white;
+  line-height: 1.9;
+  text-wrap: balance;
+}
+
+.stevia-back {
+  position: fixed;
+  left: 40px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  color: white;
+  background: none;
+  border: 2px solid white;
+  border-radius: 50%;
+  cursor: pointer;
+  pointer-events: auto;
+  z-index: 22;
+  opacity: 0;
+}
+
+.stevia-back svg {
+  transition: transform 0.3s ease;
+}
+
+.stevia-back:hover svg {
+  transform: translateX(-3px);
 }
 
 /* Product layers */
@@ -213,6 +446,10 @@ html, body {
   display: inline-block;
 }
 
+.pw-block {
+  display: block;
+}
+
 .pw-thin { font-weight: 300; }
 .pw-bold { font-weight: 700; }
 
@@ -228,17 +465,34 @@ html, body {
 }
 
 .product-post {
-  font-size: 5.4vw;
+  font-size: 5.8vw;
   white-space: nowrap;
   line-height: 1.2;
   margin-top: 10px;
+}
+
+.product-tagline {
+  font-size: 2.2vw;
+  line-height: 1.4;
+  margin-top: 15px;
+  letter-spacing: 0.05em;
+}
+
+.product-body {
+  font-size: 1.4vw;
+  font-weight: 300;
+  line-height: 1.6;
+  margin-top: 35px;
+  letter-spacing: 0.03em;
+  text-transform: none;
+  text-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
 }
 
 .product-kcal {
   font-family: 'Josefin Sans', sans-serif;
   font-size: 1.4vw;
   font-weight: 300;
-  margin-top: 30px;
+  margin-top: 70px;
   text-transform: none;
   letter-spacing: 0.05em;
   background: white;
@@ -252,26 +506,25 @@ html, body {
 
 .hint-pointer { display: none; }
 .mobile-br { display: none; }
-.mobile-overlay { display: none; }
+
+.mobile-overlay {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: rgba(10, 94, 181, 0.25);
+  z-index: 19;
+  opacity: 0;
+  pointer-events: none;
+}
 
 /* ── Mobile ──────────────────────────────────────────── */
 @media (max-width: 768px) {
   .hint-mouse { display: none; }
   .hint-pointer { display: block; }
   .mobile-br { display: block; }
-
-  .mobile-overlay {
-    display: block;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    background: rgba(10, 94, 181, 0.25);
-    z-index: 19;
-    opacity: 0;
-    pointer-events: none;
-  }
 
   .product-kcal {
     font-size: 3vw;
@@ -282,18 +535,45 @@ html, body {
     margin-bottom: 15px;
   }
 
+  .product-tagline {
+    font-size: 4.5vw;
+  }
+
+  .product-body {
+    font-size: 3vw;
+  }
+
   .stevia-points {
     font-size: 5vw;
   }
 
+  .stevia-panel-content {
+    max-width: 90vw;
+  }
 
-  .logo-h3 {
-    width: 62px;
-    height: 62px;
-    bottom: auto;
-    top: 40px;
-    right: auto;
-    left: 50%;
-    transform: translateX(-50%);
+  .stevia-title { font-size: 10vw; }
+  .stevia-leaf { font-size: 10vw; }
+  .stevia-desc { font-size: 3.5vw; }
+  .stevia-subtitle { font-size: 3.5vw; }
+  .stevia-col-text { font-size: 3vw; }
+  .stevia-list li { font-size: 3vw; }
+  .stevia-table-footer { font-size: 3vw; }
+
+  .stevia-table {
+    flex-direction: column;
+  }
+
+  .stevia-table-col:first-child {
+    border-right: none;
+    border-bottom: 2px solid white;
+  }
+
+  .stevia-back {
+    position: static;
+    transform: none;
+    display: flex;
+    margin: 1.5em auto 0;
+    width: 40px;
+    height: 40px;
   }
 }
