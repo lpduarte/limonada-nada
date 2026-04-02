@@ -10,6 +10,8 @@ window.addEventListener('resize', positionLines);
 
 const ease = 'power2.out';
 const hint = document.getElementById('scroll-hint');
+const isDesktop = window.matchMedia('(min-width: 769px)').matches;
+const isMobile = !isDesktop;
 
 // ── Product badge (sugar fade on AÇÚCAR) ────────────────
 let badgeSugarSteps;
@@ -56,8 +58,6 @@ function applySugarFade() {
     });
   });
 }
-const isDesktop = window.matchMedia('(min-width: 769px)').matches;
-const isMobile = !isDesktop;
 
 badgeSugarSteps = isMobile ? [
   { opacity: 0.98, blur: 0 },
@@ -88,9 +88,9 @@ function getCupOffset() {
 }
 
 // Clip-path helpers — using polygon for reliable direction control
-const CLIP_HIDDEN_BOTTOM = 'polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)'; // hidden: collapsed at bottom
-const CLIP_HIDDEN_TOP    = 'polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)';         // hidden: collapsed at top
-const CLIP_VISIBLE       = 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)';     // fully visible
+const CLIP_HIDDEN_BOTTOM = 'polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)';
+const CLIP_HIDDEN_TOP    = 'polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)';
+const CLIP_VISIBLE       = 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)';
 
 // ── Virtual scroll ──────────────────────────────────────
 let currentBlock = 0;
@@ -100,7 +100,7 @@ const blockTimelines = [];
 
 function onWheelDown() {
   if (steviaOpen || steviaAnimating) return;
-  if (!blockReady || blockAnimating || currentBlock > 3) return;
+  if (!blockReady || blockAnimating || currentBlock > 4) return;
   blockReady = false;
   hideHint();
   playBlock(currentBlock);
@@ -162,7 +162,6 @@ function hideHint() {
   gsap.to(hint, { opacity: 0, duration: 0.3 });
   hint.style.pointerEvents = 'none';
 }
-
 
 // ── Stevia detour ──────────────────────────────────────
 let steviaOpen = false;
@@ -234,18 +233,23 @@ function closeStevia() {
 steviaLink.addEventListener('click', (e) => { e.preventDefault(); openStevia(); });
 steviaLink.addEventListener('touchend', (e) => { e.preventDefault(); openStevia(); });
 steviaHint.addEventListener('click', openStevia);
-steviaHint.addEventListener('touchend', openStevia);
+steviaHint.addEventListener('touchend', (e) => { e.preventDefault(); openStevia(); });
 steviaBack.addEventListener('click', closeStevia);
 steviaBack.addEventListener('touchend', (e) => { e.preventDefault(); closeStevia(); });
 
 // ── NADA fade effect (mobile alternative to pulse) ─────
 function applyNadaFade(id) {
   const letters = document.querySelectorAll('.nada-letter-' + id);
-  const steps = [
+  const steps = isMobile ? [
     { opacity: 0.92, blur: 0.2 },
     { opacity: 0.82, blur: 0.6 },
     { opacity: 0.7,  blur: 1.2 },
     { opacity: 0.6,  blur: 2 }
+  ] : [
+    { opacity: 0.91, blur: 0.4 },
+    { opacity: 0.78, blur: 1.15 },
+    { opacity: 0.65, blur: 2.25 },
+    { opacity: 0.52, blur: 3.75 }
   ];
   letters.forEach((el, i) => {
     gsap.to(el, {
@@ -259,11 +263,9 @@ function applyNadaFade(id) {
 }
 
 function startNadaEffect(id) {
-  if (isMobile) {
-    applyNadaFade(id);
-  } else {
-    startProductPulse(id);
-  }
+  applyNadaFade(id);
+  // To restore pulse animation, replace with:
+  // if (isMobile) { applyNadaFade(id); } else { startProductPulse(id); }
 }
 
 // ── Product pulse ───────────────────────────────────────
@@ -316,7 +318,7 @@ function buildProductBlock(productIndex, blockIndex) {
       lastPlayedBlock = blockIndex;
       blockTimelines[blockIndex] = tl;
       saveBlock();
-      if (blockIndex < 3) showHint();
+      if (blockIndex <= 3) showHint();
     }
   });
 
@@ -376,6 +378,14 @@ function buildProductBlock(productIndex, blockIndex) {
           const cx = rect.left + rect.width / 2;
           const cy = rect.top + rect.height / 2;
           gsap.set(badgeEl, { left: cx + rect.width * 0.05, top: cy + rect.height * 0.08 });
+        }
+      } else {
+        // Mobile: position below the product-post subtitle, accounting for badge visual height
+        const postEl = document.querySelector('#' + p.id + '-text-layer .product-post');
+        if (postEl) {
+          const postRect = postEl.getBoundingClientRect();
+          const badgeHeight = badgeEl.offsetHeight || 0;
+          gsap.set(badgeEl, { top: postRect.bottom + badgeHeight * 0.5 + 10 });
         }
       }
     },
@@ -470,12 +480,75 @@ function playBlock(n) {
   if (n >= 1 && n <= 3) {
     buildProductBlock(n - 1, n);
   }
+
+  if (n === 4) {
+    // Loop: maracujá → hero
+    const p = products[2]; // maracujá
+    const imgEl = '#' + p.id + '-layer img';
+    const badgeEl = document.getElementById(p.id + '-badge');
+
+    stopProductPulse(p.id);
+    badgeEl.querySelectorAll('.badge-sugar-char').forEach(ch => gsap.killTweensOf(ch));
+
+    const tl = gsap.timeline({
+      onComplete: () => {
+        // Reset all product layers
+        products.forEach(prod => {
+          gsap.set('#' + prod.id + '-layer', { clipPath: CLIP_HIDDEN_BOTTOM });
+          gsap.set('#' + prod.id + '-layer img', { x: 0, y: 0, scale: 1, transformOrigin: 'center center' });
+          gsap.set('#' + prod.id + '-text-layer', { opacity: 1 });
+          gsap.set('#' + prod.id + '-text-layer .pw', { opacity: 0 });
+          gsap.set('#' + prod.id + '-kcal', { opacity: 0 });
+          gsap.set('#' + prod.id + '-badge', { opacity: 0 });
+        });
+        gsap.set('.reconheca-layer', { opacity: 0, x: 0 });
+        gsap.set('.reconheca-line', { opacity: 0 });
+        gsap.set('#stevia-points', { opacity: 0 });
+
+        blockAnimating = false;
+        currentBlock = 0;
+        lastPlayedBlock = -1;
+        saveBlock();
+        showHint();
+      }
+    });
+
+    // Hide previous product layers underneath maracujá
+    gsap.set('#limao-layer', { clipPath: CLIP_HIDDEN_BOTTOM });
+    gsap.set('#morango-layer', { clipPath: CLIP_HIDDEN_BOTTOM });
+
+    // Fade out maracujá text + badge
+    tl.to('#' + p.id + '-text-layer .pw', { opacity: 0, filter: 'blur(30px)', duration: 0.4, ease: 'power2.in' }, 0)
+      .to('#' + p.id + '-kcal', { opacity: 0, filter: 'blur(30px)', duration: 0.4, ease: 'power2.in' }, 0)
+      .to(badgeEl, { opacity: 0, duration: 0.4, ease: 'power2.in' }, 0);
+
+    // Slide cup back to center
+    let wipeStart = 0.3;
+    if (isDesktop) {
+      tl.to(imgEl, { x: 0, y: 0, scale: 1, duration: 0.8, ease: 'power2.inOut' }, 0.2);
+      wipeStart = 1.0;
+    } else {
+      tl.to(imgEl, { scale: 1, transformOrigin: 'top 48%', duration: 0.8, ease: 'power2.inOut' }, 0.2);
+      wipeStart = 1.0;
+    }
+
+    // Wipe up maracujá (collapse from bottom to top), reveal hero
+    tl.to('#' + p.id + '-layer', { clipPath: CLIP_HIDDEN_TOP, duration: 1.2, ease: 'power2.inOut' }, wipeStart)
+      .to('body', { backgroundColor: '#0a5eb5', duration: 1.2, ease: 'power2.inOut' }, wipeStart)
+      .to('.fixed-layer', { filter: 'blur(0px)', duration: 1, ease: 'none' }, wipeStart)
+      .to('#mobile-overlay', { opacity: 0, duration: 0.8, ease: 'none' }, wipeStart);
+
+    // Show hero text
+    tl.to('.text-layer', { filter: 'none', opacity: 1, duration: 0.8, ease: 'none' }, wipeStart + 0.5);
+
+    // Re-apply sugar fade after text visible
+    tl.add(() => applySugarFade(), wipeStart + 1.2);
+  }
 }
 
 // ── Reverse block ───────────────────────────────────────
 function reverseBlock(n) {
   blockAnimating = true;
-  const tl = blockTimelines[n];
 
   if (n === 0) {
     // Fade out reconheça, unblur and show intro
@@ -561,7 +634,15 @@ function setProductComplete(productIndex) {
       gsap.set(restoreBadge, { opacity: 1, filter: 'blur(0px)' });
     });
   } else {
-    gsap.set(restoreBadge, { opacity: 1, filter: 'blur(0px)' });
+    gsap.delayedCall(0.1, () => {
+      const postEl = document.querySelector('#' + p.id + '-text-layer .product-post');
+      if (postEl) {
+        const postRect = postEl.getBoundingClientRect();
+        const badgeH = restoreBadge.offsetHeight || 0;
+        gsap.set(restoreBadge, { top: postRect.bottom + badgeH * 0.5 + 10 });
+      }
+      gsap.set(restoreBadge, { opacity: 1, filter: 'blur(0px)' });
+    });
   }
 }
 

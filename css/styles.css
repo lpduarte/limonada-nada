@@ -210,8 +210,6 @@ html, body {
   filter: blur(10px);
   cursor: pointer;
 }
-
-
 .stevia-hint-text {
   font-family: 'Caveat', cursive;
   font-size: 1.2em;
@@ -442,7 +440,6 @@ html, body {
   display: inline-block;
 }
 
-
 /* Product layers */
 .product-layer {
   position: fixed;
@@ -456,6 +453,10 @@ html, body {
   overflow: hidden;
   clip-path: polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%);
 }
+
+#limao-layer    { z-index: 15; background: #e8b000; }
+#morango-layer  { z-index: 16; background: #d94452; }
+#maracuja-layer { z-index: 17; background: #6b2fa0; }
 
 .product-layer img {
   height: 100vh;
@@ -482,11 +483,6 @@ html, body {
   color: white;
   text-transform: uppercase;
   text-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-  overflow: visible;
-}
-
-.product-text-wrapper * {
-  overflow: visible;
 }
 
 .product-pre {
@@ -538,7 +534,6 @@ html, body {
   margin-top: 35px;
   letter-spacing: 0.03em;
   text-transform: none;
-  text-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 }
 
 .product-kcal {
@@ -595,8 +590,6 @@ html, body {
   z-index: 30;
   opacity: 0;
 }
-
-
 .hint-pointer { display: none; }
 
 .mobile-overlay {
@@ -620,6 +613,10 @@ html, body {
   .pw-thin { font-weight: 400; }
 
   #limo { font-weight: 200; }
+
+  .main-line {
+    top: 16%;
+  }
 
   .main-line, .subtitle-line {
     text-shadow: 0 0 25px rgba(0, 0, 0, 0.25);
@@ -649,9 +646,9 @@ html, body {
   .product-text-wrapper {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    height: 100vh;
-    padding: 9vh 0 22vh;
+    height: 100dvh;
+    height: -webkit-fill-available;
+    padding: 9dvh 0 0;
   }
 
   .product-pre {
@@ -668,12 +665,9 @@ html, body {
     text-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
   }
 
-  .badge-inner {
-    filter: drop-shadow(0 0 30px rgba(0, 0, 0, 0.4));
-  }
-
   .product-kcal {
     margin-top: 15px;
+    margin-bottom: 12dvh;
     display: inline-block;
     align-self: center;
   }
@@ -750,13 +744,8 @@ html, body {
     filter: drop-shadow(0 0 30px rgba(0, 0, 0, 0.4));
   }
 
-  .limao-badge {
-    top: 33vh;
-    left: 7vw;
-  }
-
+  .limao-badge,
   .maracuja-badge {
-    top: 38vh;
     left: 7vw;
   }
 
@@ -766,7 +755,6 @@ html, body {
   }
 
   .morango-badge {
-    top: 33vh;
     right: 7vw;
   }
 
