@@ -11,10 +11,34 @@ window.addEventListener('resize', positionLines);
 const ease = 'power2.out';
 const hint = document.getElementById('scroll-hint');
 
+// ── Product badge (sugar fade on AÇÚCAR) ────────────────
+let badgeSugarSteps;
+
+function startBadgeSugarFade(badgeEl) {
+  if (isMobile) return;
+  const chars = badgeEl.querySelectorAll('.badge-sugar-char');
+  chars.forEach((ch, i) => {
+    gsap.to(ch, {
+      opacity: badgeSugarSteps[i].opacity,
+      filter: 'blur(' + badgeSugarSteps[i].blur + 'px)',
+      duration: 2.5,
+      delay: i * 0.15,
+      ease: 'power2.in'
+    });
+  });
+}
+
 // ── Sugar fade effect ───────────────────────────────────
 function applySugarFade() {
   const chars = document.querySelectorAll('.sugar-char');
-  const steps = [
+  const steps = isMobile ? [
+    { opacity: 0.95, blur: 0 },
+    { opacity: 0.92, blur: 0.2 },
+    { opacity: 0.88, blur: 0.4 },
+    { opacity: 0.82, blur: 0.7 },
+    { opacity: 0.75, blur: 1 },
+    { opacity: 0.7,  blur: 1.5 }
+  ] : [
     { opacity: 0.95, blur: 0.3 },
     { opacity: 0.85, blur: 0.8 },
     { opacity: 0.7,  blur: 2 },
@@ -33,6 +57,23 @@ function applySugarFade() {
   });
 }
 const isDesktop = window.matchMedia('(min-width: 769px)').matches;
+const isMobile = !isDesktop;
+
+badgeSugarSteps = isMobile ? [
+  { opacity: 0.98, blur: 0 },
+  { opacity: 0.95, blur: 0.1 },
+  { opacity: 0.9,  blur: 0.3 },
+  { opacity: 0.85, blur: 0.5 },
+  { opacity: 0.78, blur: 0.8 },
+  { opacity: 0.7,  blur: 1 }
+] : [
+  { opacity: 0.95, blur: 0.1 },
+  { opacity: 0.88, blur: 0.3 },
+  { opacity: 0.78, blur: 0.6 },
+  { opacity: 0.68, blur: 1 },
+  { opacity: 0.58, blur: 1.5 },
+  { opacity: 0.5,  blur: 2 }
+];
 
 // Calculate cup offset: desired 15vw, clamped to image limit
 function getCupOffset() {
@@ -93,12 +134,12 @@ hint.addEventListener('click', onWheelDown);
 // ── Hint ────────────────────────────────────────────────
 let hintAnim = null;
 let hintFadeTween = null;
-const isMobile = window.matchMedia('(max-width: 768px)').matches;
 
 function showHint() {
   if (hintAnim) hintAnim.kill();
   if (hintFadeTween) hintFadeTween.kill();
   gsap.set(hint, { y: 0 });
+  hint.style.pointerEvents = 'auto';
 
   if (isMobile) {
     // Pointer: swipe up, fade out, reappear at bottom, repeat
@@ -119,6 +160,7 @@ function hideHint() {
   if (hintAnim) hintAnim.kill();
   if (hintFadeTween) hintFadeTween.kill();
   gsap.to(hint, { opacity: 0, duration: 0.3 });
+  hint.style.pointerEvents = 'none';
 }
 
 
@@ -148,7 +190,7 @@ function hideSteviaHint() {
 }
 
 function openStevia() {
-  if (steviaAnimating || steviaOpen) return;
+  if (steviaAnimating || steviaOpen || blockAnimating || currentBlock !== 1) return;
   steviaAnimating = true;
   steviaOpen = true;
   hideHint();
@@ -190,8 +232,39 @@ function closeStevia() {
 }
 
 steviaLink.addEventListener('click', (e) => { e.preventDefault(); openStevia(); });
+steviaLink.addEventListener('touchend', (e) => { e.preventDefault(); openStevia(); });
 steviaHint.addEventListener('click', openStevia);
+steviaHint.addEventListener('touchend', openStevia);
 steviaBack.addEventListener('click', closeStevia);
+steviaBack.addEventListener('touchend', (e) => { e.preventDefault(); closeStevia(); });
+
+// ── NADA fade effect (mobile alternative to pulse) ─────
+function applyNadaFade(id) {
+  const letters = document.querySelectorAll('.nada-letter-' + id);
+  const steps = [
+    { opacity: 0.92, blur: 0.2 },
+    { opacity: 0.82, blur: 0.6 },
+    { opacity: 0.7,  blur: 1.2 },
+    { opacity: 0.6,  blur: 2 }
+  ];
+  letters.forEach((el, i) => {
+    gsap.to(el, {
+      opacity: steps[i].opacity,
+      filter: 'blur(' + steps[i].blur + 'px)',
+      duration: 2,
+      delay: i * 0.1,
+      ease: 'power2.in'
+    });
+  });
+}
+
+function startNadaEffect(id) {
+  if (isMobile) {
+    applyNadaFade(id);
+  } else {
+    startProductPulse(id);
+  }
+}
 
 // ── Product pulse ───────────────────────────────────────
 const productPulseTweens = {};
@@ -252,11 +325,15 @@ function buildProductBlock(productIndex, blockIndex) {
   // Reset clip
   gsap.set('#' + p.id + '-layer', { clipPath: CLIP_HIDDEN_BOTTOM });
 
-  // Desktop: position cup for non-first products (already scaled+offset); first starts centered at normal size
+  // Position cup: desktop → right, mobile → down
   if (isDesktop && productIndex > 0) {
     gsap.set(imgEl, { x: getCupOffset(), y: '-5vh', scale: 1.28, transformOrigin: 'center center' });
   } else if (isDesktop) {
     gsap.set(imgEl, { x: 0, scale: 1 });
+  } else if (!isDesktop && productIndex > 0) {
+    gsap.set(imgEl, { scale: 1.3, transformOrigin: 'top 48%' });
+  } else if (!isDesktop) {
+    gsap.set(imgEl, { scale: 1, transformOrigin: 'top 48%' });
   }
 
   if (productIndex === 0) {
@@ -269,22 +346,42 @@ function buildProductBlock(productIndex, blockIndex) {
     .to('#' + p.id + '-layer', { clipPath: CLIP_VISIBLE, duration: 1.5, ease: 'power2.inOut' }, 0.5)
     .to('body', { backgroundColor: p.color, duration: 1.5, ease: 'power2.inOut' }, 0.5);
 
-  // Desktop: slide + scale limão cup to the right after wipe
+  // Slide cup after wipe: desktop → right, mobile → down (limão only, others pre-positioned)
   if (isDesktop && productIndex === 0) {
     tl.to(imgEl, { x: getCupOffset(), y: '-5vh', scale: 1.28, transformOrigin: 'center center', duration: 1, ease: 'power2.inOut' }, '-=0.3');
+  } else if (!isDesktop && productIndex === 0) {
+    tl.to(imgEl, { scale: 1.3, transformOrigin: 'top 48%', duration: 1, ease: 'power2.inOut' }, '-=0.3');
   }
 
   // Line by line reveal: 0.5s duration, -=0.2 overlap
-  const textStart = (isDesktop && productIndex === 0) ? '-=0.3' : '+=0.3';
+  const textStart = productIndex === 0 ? '-=0.3' : '+=0.3';
   const lastTextIdx = lw.length - 1;
   lw.forEach((el, i) => {
     const pos = i === 0 ? textStart : '-=0.2';
     const opts = { opacity: 1, filter: 'blur(0px)', duration: 0.5, ease };
-    if (i === lastTextIdx) opts.onComplete = () => startProductPulse(p.id);
+    if (i === lastTextIdx) opts.onComplete = () => startNadaEffect(p.id);
     tl.to(el, opts, pos);
   });
 
-  tl.to('#' + p.id + '-kcal', { opacity: 1, filter: 'blur(0px)', duration: 0.5, ease }, '+=0.2');
+  tl.to('#' + p.id + '-kcal', { opacity: 1, filter: 'blur(0px)', duration: 0.5, ease }, '-=0.2');
+
+  // Badge: same cadence as text, sugar fade starts after
+  const badgeEl = document.getElementById(p.id + '-badge');
+  tl.to(badgeEl, { opacity: 1, duration: 0.5, ease,
+    onStart: () => {
+      if (isDesktop) {
+        const img = document.querySelector('#' + p.id + '-layer img');
+        if (img) {
+          const rect = img.getBoundingClientRect();
+          const cx = rect.left + rect.width / 2;
+          const cy = rect.top + rect.height / 2;
+          gsap.set(badgeEl, { left: cx + rect.width * 0.05, top: cy + rect.height * 0.08 });
+        }
+      }
+    },
+    onComplete: () => startBadgeSugarFade(badgeEl)
+  }, '-=0.2');
+
   return tl;
 }
 
@@ -302,28 +399,42 @@ function reverseProductBlock(n) {
       lastPlayedBlock = n - 1;
       saveBlock();
       if (n === 1) {
-        document.querySelector('.reconheca-layer').style.pointerEvents = 'auto';
-        showSteviaHint();
+        gsap.delayedCall(0.5, () => {
+          document.querySelector('.reconheca-layer').style.pointerEvents = 'auto';
+          showSteviaHint();
+        });
       }
       showHint();
     }
   });
 
-  revTl.to('#' + p.id + '-text-layer .pw', { opacity: 0, filter: 'blur(30px)', duration: 0.6, ease: 'power2.in' }, 0)
-       .to('#' + p.id + '-kcal', { opacity: 0, filter: 'blur(30px)', duration: 0.6, ease: 'power2.in' }, 0);
+  const badgeEl = document.getElementById(p.id + '-badge');
+  // Kill any running sugar fade tweens on this badge
+  badgeEl.querySelectorAll('.badge-sugar-char').forEach(ch => gsap.killTweensOf(ch));
 
-  // Desktop: slide limão cup back to center before wipe
-  if (isDesktop && n === 1) {
-    revTl.to(imgEl, { x: 0, y: 0, scale: 1, duration: 1, ease: 'power2.inOut' }, 0.3);
+  revTl.to('#' + p.id + '-text-layer .pw', { opacity: 0, filter: 'blur(30px)', duration: 0.4, ease: 'power2.in' }, 0)
+       .to('#' + p.id + '-kcal', { opacity: 0, filter: 'blur(30px)', duration: 0.4, ease: 'power2.in' }, 0)
+       .to(badgeEl, { opacity: 0, duration: 0.4, ease: 'power2.in' }, 0);
+
+  // Slide limão cup back to center, then wipe
+  let wipeStart = 0.3;
+  if (n === 1) {
+    if (isDesktop) {
+      revTl.to(imgEl, { x: 0, y: 0, scale: 1, duration: 0.8, ease: 'power2.inOut' }, 0.2);
+    } else {
+      revTl.to(imgEl, { scale: 1, transformOrigin: 'top 48%', duration: 0.8, ease: 'power2.inOut' }, 0.2);
+    }
+    wipeStart = 1.0; // after slide-back completes
   }
 
-  revTl.to('#' + p.id + '-layer', { clipPath: CLIP_HIDDEN_BOTTOM, duration: 1.5, ease: 'power2.inOut' }, 0.5)
-       .to('body', { backgroundColor: p.prevColor, duration: 1.5, ease: 'power2.inOut' }, 0.5)
-       .to(prevTextLayer, { opacity: 1, duration: 1, ease: 'none' }, 0.7);
+  revTl.to('#' + p.id + '-layer', { clipPath: CLIP_HIDDEN_BOTTOM, duration: 1.2, ease: 'power2.inOut' }, wipeStart)
+       .to('body', { backgroundColor: p.prevColor, duration: 1.2, ease: 'power2.inOut' }, wipeStart)
+       .to(prevTextLayer, { opacity: 1, duration: 0.6, ease: 'none' }, wipeStart + 1.0);
+
 
   if (n === 1) {
-    revTl.to('.fixed-layer', { filter: 'blur(20px)', duration: 1, ease: 'none' }, 0.7)
-         .to('#mobile-overlay', { opacity: 1, duration: 1, ease: 'none' }, 0.7);
+    revTl.to('.fixed-layer', { filter: 'blur(20px)', duration: 0.8, ease: 'none' }, wipeStart + 0.8)
+         .to('#mobile-overlay', { opacity: 1, duration: 0.8, ease: 'none' }, wipeStart + 0.8);
   }
 }
 
@@ -428,13 +539,30 @@ function setProductComplete(productIndex) {
   }
   gsap.set('#' + p.id + '-layer', { clipPath: CLIP_VISIBLE });
   gsap.set('body', { backgroundColor: p.color });
-  // Desktop: set cup to right position
+  // Set cup to offset position
   if (isDesktop) {
     gsap.set('#' + p.id + '-layer img', { x: getCupOffset(), y: '-5vh', scale: 1.28, transformOrigin: 'center center' });
+  } else {
+    gsap.set('#' + p.id + '-layer img', { scale: 1.3, transformOrigin: 'top 48%' });
   }
   document.querySelectorAll('#' + p.id + '-text-layer .pw').forEach(el => gsap.set(el, { opacity: 1, filter: 'blur(0px)' }));
   gsap.set('#' + p.id + '-kcal', { opacity: 1, filter: 'blur(0px)' });
-  startProductPulse(p.id);
+  startNadaEffect(p.id);
+  const restoreBadge = document.getElementById(p.id + '-badge');
+  if (isDesktop) {
+    gsap.delayedCall(0.1, () => {
+      const img = document.querySelector('#' + p.id + '-layer img');
+      if (img) {
+        const rect = img.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        gsap.set(restoreBadge, { left: cx + rect.width * 0.05, top: cy + rect.height * 0.08 });
+      }
+      gsap.set(restoreBadge, { opacity: 1, filter: 'blur(0px)' });
+    });
+  } else {
+    gsap.set(restoreBadge, { opacity: 1, filter: 'blur(0px)' });
+  }
 }
 
 // ── Init ────────────────────────────────────────────────

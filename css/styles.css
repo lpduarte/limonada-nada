@@ -361,22 +361,87 @@ html, body {
   width: 48px;
   height: 48px;
   color: white;
-  background: none;
+  background: transparent;
   border: 2px solid white;
   border-radius: 50%;
   cursor: pointer;
   pointer-events: auto;
   z-index: 22;
   opacity: 0;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .stevia-back svg {
-  transition: transform 0.3s ease;
+  pointer-events: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.stevia-back:hover svg {
-  transform: translateX(-3px);
+.stevia-back * {
+  pointer-events: none;
 }
+
+@media (hover: hover) {
+  .stevia-back svg {
+    transition: transform 0.3s ease;
+  }
+
+  .stevia-back:hover svg {
+    transform: translateX(-3px);
+  }
+}
+
+/* Product badge */
+.product-badge {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.badge-inner {
+  position: relative;
+  transform: rotate(15deg);
+  filter: drop-shadow(0 0 20px rgba(0, 0, 0, 0.1));
+}
+
+.badge-svg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 175%;
+  height: 175%;
+  transform: translate(-50%, -50%);
+}
+
+.badge-text {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Josefin Sans', sans-serif;
+  color: white;
+  text-transform: uppercase;
+  font-size: 1.4vw;
+  line-height: 1;
+  text-align: center;
+}
+
+.badge-bold {
+  font-weight: 700;
+}
+
+.badge-thin {
+  font-weight: 300;
+}
+
+.badge-sugar {
+  display: inline;
+}
+
+.badge-sugar-char {
+  display: inline-block;
+}
+
 
 /* Product layers */
 .product-layer {
@@ -529,8 +594,8 @@ html, body {
   transform: translateX(-50%);
   z-index: 30;
   opacity: 0;
-  pointer-events: none;
 }
+
 
 .hint-pointer { display: none; }
 
@@ -552,9 +617,41 @@ html, body {
   .hint-mouse { display: none; }
   .hint-pointer { display: block; }
 
+  .pw-thin { font-weight: 400; }
+
+  #limo { font-weight: 200; }
+
+  .main-line, .subtitle-line {
+    text-shadow: 0 0 25px rgba(0, 0, 0, 0.25);
+  }
+
+  .reconheca-layer .reconheca-content {
+    transform: translateY(-8vh);
+  }
+
+  .reconheca-sub {
+    font-size: 8vw;
+    line-height: 1.3;
+    margin-top: 0;
+  }
+
   .product-kcal {
-    font-size: 3vw;
+    font-size: 3.6vw;
+    font-weight: 400;
     padding: 0.5em 1.2em;
+  }
+
+  .product-text-layer {
+    align-items: stretch;
+    padding-top: 0;
+  }
+
+  .product-text-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100vh;
+    padding: 9vh 0 22vh;
   }
 
   .product-pre {
@@ -562,39 +659,130 @@ html, body {
   }
 
   .product-body {
-    font-size: 3vw;
+    font-size: 3.6vw;
+    margin-top: auto;
+  }
+
+  #limao-text-layer .product-body,
+  #limao-text-layer .product-slogan {
+    text-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
+  }
+
+  .badge-inner {
+    filter: drop-shadow(0 0 30px rgba(0, 0, 0, 0.4));
+  }
+
+  .product-kcal {
+    margin-top: 15px;
+    display: inline-block;
+    align-self: center;
   }
 
   .stevia-points {
     font-size: 5vw;
+    max-width: 90vw;
+    text-wrap: balance;
+  }
+
+  .stevia-points p {
+    margin-bottom: 0.6em;
+  }
+
+  .stevia-hint {
+    left: -15vw;
+    right: auto;
+    flex-direction: row-reverse;
+  }
+
+  .stevia-hint .stevia-arrow {
+    transform: scaleX(-1);
+  }
+
+  .stevia-link {
+    transition: none;
+  }
+
+  .stevia-link:hover,
+  .stevia-link-wrap:hover .stevia-link {
+    font-weight: 300;
   }
 
   .stevia-panel-content {
     max-width: 90vw;
+    max-height: 90vh;
+    padding-top: 5vh;
+  }
+
+  .stevia-panel {
+    align-items: flex-start;
   }
 
   .stevia-title { font-size: 10vw; }
   .stevia-leaf { font-size: 10vw; }
   .stevia-desc { font-size: 3.5vw; }
   .stevia-subtitle { font-size: 3.5vw; }
-  .stevia-list li { font-size: 3vw; }
-  .stevia-table-footer { font-size: 3vw; }
+  .stevia-list li { font-size: 3.6vw; }
+  .stevia-table-footer { font-size: 3.6vw; }
 
   .stevia-table {
     flex-direction: column;
+    border-width: 1px;
   }
 
   .stevia-table-col:first-child {
     border-right: none;
-    border-bottom: 2px solid white;
+    border-bottom: 1px solid white;
+  }
+
+  .stevia-table-footer {
+    border-top-width: 1px;
+  }
+
+  .stevia-subtitle br {
+    display: none;
+  }
+
+  .badge-text {
+    font-size: 5.8vw;
+  }
+
+  .badge-inner {
+    filter: drop-shadow(0 0 30px rgba(0, 0, 0, 0.4));
+  }
+
+  .limao-badge {
+    top: 33vh;
+    left: 7vw;
+  }
+
+  .maracuja-badge {
+    top: 38vh;
+    left: 7vw;
+  }
+
+  .limao-badge .badge-inner,
+  .maracuja-badge .badge-inner {
+    transform: rotate(-15deg);
+  }
+
+  .morango-badge {
+    top: 33vh;
+    right: 7vw;
+  }
+
+  .morango-badge .badge-inner {
+    transform: rotate(15deg);
   }
 
   .stevia-back {
     position: static;
     transform: none;
     display: flex;
-    margin: 1.5em auto 0;
-    width: 40px;
-    height: 40px;
+    margin: 2em auto 0;
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    min-height: 48px;
+    border-width: 1px;
   }
 }
