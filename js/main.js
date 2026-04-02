@@ -11,6 +11,41 @@ window.addEventListener('resize', positionLines);
 const ease = 'power2.out';
 const hint = document.getElementById('scroll-hint');
 
+// ── Sugar fade effect ───────────────────────────────────
+function applySugarFade() {
+  const chars = document.querySelectorAll('.sugar-char');
+  const steps = [
+    { opacity: 0.95, blur: 0.3 },
+    { opacity: 0.85, blur: 0.8 },
+    { opacity: 0.7,  blur: 2 },
+    { opacity: 0.55, blur: 4 },
+    { opacity: 0.4,  blur: 7 },
+    { opacity: 0.3,  blur: 11 }
+  ];
+  chars.forEach((ch, i) => {
+    gsap.to(ch, {
+      opacity: steps[i].opacity,
+      filter: 'blur(' + steps[i].blur + 'px)',
+      duration: 2.5,
+      delay: i * 0.15,
+      ease: 'power2.in'
+    });
+  });
+}
+const isDesktop = window.matchMedia('(min-width: 769px)').matches;
+
+// Calculate cup offset: desired 15vw, clamped to image limit
+function getCupOffset() {
+  if (!isDesktop) return 0;
+  const img = document.querySelector('.product-layer img');
+  if (!img) return 0;
+  const imgWidth = img.offsetWidth;
+  const vw = window.innerWidth;
+  const maxSafe = (imgWidth - vw) / 2;
+  const desired = vw * 0.15; // 15vw
+  return Math.max(0, Math.min(desired, maxSafe));
+}
+
 // Clip-path helpers — using polygon for reliable direction control
 const CLIP_HIDDEN_BOTTOM = 'polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)'; // hidden: collapsed at bottom
 const CLIP_HIDDEN_TOP    = 'polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)';         // hidden: collapsed at top
@@ -181,6 +216,7 @@ function stopProductPulse(id) {
     productPulseTweens[id] = [];
   }
   document.querySelectorAll('.nada-letter-' + id).forEach(el => {
+    gsap.killTweensOf(el);
     gsap.set(el, { opacity: 1, filter: 'blur(0px)' });
   });
 }
@@ -198,6 +234,7 @@ function buildProductBlock(productIndex, blockIndex) {
   const prevTextLayer = productIndex === 0
     ? '.reconheca-layer'
     : '#' + products[productIndex - 1].id + '-text-layer';
+  const imgEl = '#' + p.id + '-layer img';
 
   const tl = gsap.timeline({
     onComplete: () => {
@@ -215,6 +252,13 @@ function buildProductBlock(productIndex, blockIndex) {
   // Reset clip
   gsap.set('#' + p.id + '-layer', { clipPath: CLIP_HIDDEN_BOTTOM });
 
+  // Desktop: position cup for non-first products (already scaled+offset); first starts centered at normal size
+  if (isDesktop && productIndex > 0) {
+    gsap.set(imgEl, { x: getCupOffset(), y: '-5vh', scale: 1.28, transformOrigin: 'center center' });
+  } else if (isDesktop) {
+    gsap.set(imgEl, { x: 0, scale: 1 });
+  }
+
   if (productIndex === 0) {
     document.querySelector('.reconheca-layer').style.pointerEvents = 'none';
     hideSteviaHint();
@@ -225,10 +269,16 @@ function buildProductBlock(productIndex, blockIndex) {
     .to('#' + p.id + '-layer', { clipPath: CLIP_VISIBLE, duration: 1.5, ease: 'power2.inOut' }, 0.5)
     .to('body', { backgroundColor: p.color, duration: 1.5, ease: 'power2.inOut' }, 0.5);
 
+  // Desktop: slide + scale limão cup to the right after wipe
+  if (isDesktop && productIndex === 0) {
+    tl.to(imgEl, { x: getCupOffset(), y: '-5vh', scale: 1.28, transformOrigin: 'center center', duration: 1, ease: 'power2.inOut' }, '-=0.3');
+  }
+
   // Line by line reveal: 0.5s duration, -=0.2 overlap
+  const textStart = (isDesktop && productIndex === 0) ? '-=0.3' : '+=0.3';
   const lastTextIdx = lw.length - 1;
   lw.forEach((el, i) => {
-    const pos = i === 0 ? '+=0.3' : '-=0.2';
+    const pos = i === 0 ? textStart : '-=0.2';
     const opts = { opacity: 1, filter: 'blur(0px)', duration: 0.5, ease };
     if (i === lastTextIdx) opts.onComplete = () => startProductPulse(p.id);
     tl.to(el, opts, pos);
@@ -243,6 +293,7 @@ function reverseProductBlock(n) {
   const p = products[n - 1];
   stopProductPulse(p.id);
   const prevTextLayer = n === 1 ? '.reconheca-layer' : '#' + products[n - 2].id + '-text-layer';
+  const imgEl = '#' + p.id + '-layer img';
 
   const revTl = gsap.timeline({
     onComplete: () => {
@@ -259,14 +310,20 @@ function reverseProductBlock(n) {
   });
 
   revTl.to('#' + p.id + '-text-layer .pw', { opacity: 0, filter: 'blur(30px)', duration: 0.6, ease: 'power2.in' }, 0)
-       .to('#' + p.id + '-kcal', { opacity: 0, filter: 'blur(30px)', duration: 0.6, ease: 'power2.in' }, 0)
-       .to('#' + p.id + '-layer', { clipPath: CLIP_HIDDEN_BOTTOM, duration: 1.5, ease: 'power2.inOut' }, 0.3)
-       .to('body', { backgroundColor: p.prevColor, duration: 1.5, ease: 'power2.inOut' }, 0.3)
-       .to(prevTextLayer, { opacity: 1, duration: 1, ease: 'none' }, 0.5);
+       .to('#' + p.id + '-kcal', { opacity: 0, filter: 'blur(30px)', duration: 0.6, ease: 'power2.in' }, 0);
+
+  // Desktop: slide limão cup back to center before wipe
+  if (isDesktop && n === 1) {
+    revTl.to(imgEl, { x: 0, y: 0, scale: 1, duration: 1, ease: 'power2.inOut' }, 0.3);
+  }
+
+  revTl.to('#' + p.id + '-layer', { clipPath: CLIP_HIDDEN_BOTTOM, duration: 1.5, ease: 'power2.inOut' }, 0.5)
+       .to('body', { backgroundColor: p.prevColor, duration: 1.5, ease: 'power2.inOut' }, 0.5)
+       .to(prevTextLayer, { opacity: 1, duration: 1, ease: 'none' }, 0.7);
 
   if (n === 1) {
-    revTl.to('.fixed-layer', { filter: 'blur(20px)', duration: 1, ease: 'none' }, 0.5)
-         .to('#mobile-overlay', { opacity: 1, duration: 1, ease: 'none' }, 0.5);
+    revTl.to('.fixed-layer', { filter: 'blur(20px)', duration: 1, ease: 'none' }, 0.7)
+         .to('#mobile-overlay', { opacity: 1, duration: 1, ease: 'none' }, 0.7);
   }
 }
 
@@ -348,6 +405,7 @@ function setIntroComplete() {
   gsap.set('#limo', { opacity: 1, filter: 'blur(0px)' });
   gsap.set('#nada', { opacity: 1, filter: 'blur(0px)' });
   gsap.set('.sub-group', { opacity: 1, filter: 'blur(0px)' });
+  applySugarFade();
 }
 
 function setBlock0Complete() {
@@ -370,6 +428,10 @@ function setProductComplete(productIndex) {
   }
   gsap.set('#' + p.id + '-layer', { clipPath: CLIP_VISIBLE });
   gsap.set('body', { backgroundColor: p.color });
+  // Desktop: set cup to right position
+  if (isDesktop) {
+    gsap.set('#' + p.id + '-layer img', { x: getCupOffset(), y: '-5vh', scale: 1.28, transformOrigin: 'center center' });
+  }
   document.querySelectorAll('#' + p.id + '-text-layer .pw').forEach(el => gsap.set(el, { opacity: 1, filter: 'blur(0px)' }));
   gsap.set('#' + p.id + '-kcal', { opacity: 1, filter: 'blur(0px)' });
   startProductPulse(p.id);
@@ -383,12 +445,12 @@ function init() {
     tl1.to('#limo', { opacity: 1, filter: 'blur(0px)', duration: 0.8, ease })
        .to('#nada', { opacity: 1, filter: 'blur(0px)', duration: 0.8, ease }, '-=0.2')
        .to('#sub-group-1', { opacity: 1, filter: 'blur(0px)', duration: 0.5, ease }, '-=0.2')
-       .to('#sub-group-2', { opacity: 1, filter: 'blur(0px)', duration: 0.5, ease }, '-=0.2');
+       .to('#sub-group-2', { opacity: 1, filter: 'blur(0px)', duration: 0.5, ease, onStart: applySugarFade }, '-=0.2');
     tl1.eventCallback('onComplete', () => { showHint(); });
   } else if (savedBlock === 0) {
     setIntroComplete();
     currentBlock = 0;
-    setTimeout(() => { if (!blockAnimating) playBlock(0); }, 500);
+    gsap.delayedCall(0.5, () => { if (!blockAnimating) playBlock(0); });
   } else if (savedBlock >= 1 && savedBlock <= 3) {
     setIntroComplete();
     setBlock0Complete();
@@ -396,7 +458,7 @@ function init() {
       setProductComplete(i);
     }
     currentBlock = savedBlock;
-    setTimeout(() => { if (!blockAnimating) playBlock(savedBlock); }, 500);
+    gsap.delayedCall(0.5, () => { if (!blockAnimating) playBlock(savedBlock); });
   }
 }
 

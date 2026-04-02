@@ -8,6 +8,7 @@ html, body {
   overflow: hidden;
   height: 100vh;
   background: #0a5eb5;
+  touch-action: manipulation;
 }
 
 /* Hero / intro layer */
@@ -81,22 +82,27 @@ html, body {
 #limo {
   font-weight: 100;
   opacity: 0;
-  filter: blur(30px);
 }
 
 #nada {
   font-weight: 700;
   opacity: 0;
-  filter: blur(30px);
 }
 
 .sub-group {
   opacity: 0;
-  filter: blur(30px);
 }
 
 .sub-thin { font-weight: 300; }
 .sub-bold { font-weight: 700; }
+
+.sugar-fade {
+  display: inline-block;
+}
+
+.sugar-char {
+  display: inline-block;
+}
 
 /* RECONHEÇA layer */
 .reconheca-layer {
@@ -112,6 +118,9 @@ html, body {
   z-index: 20;
 }
 
+.reconheca-content {
+  text-align: center;
+}
 
 .reconheca-sub {
   font-family: 'Josefin Sans', sans-serif;
@@ -135,12 +144,10 @@ html, body {
   margin-right: auto;
   line-height: 1.6;
   opacity: 0;
-  filter: blur(30px);
 }
 
 .reconheca-line {
   opacity: 0;
-  filter: blur(30px);
 }
 
 /* Stevia link */
@@ -182,7 +189,7 @@ html, body {
   display: block;
   width: 100%;
   height: 4px;
-  margin-top: -5px;
+  margin-top: -0.35em;
 }
 
 .stevia-link-underline path {
@@ -328,20 +335,6 @@ html, body {
   margin-bottom: 0.8em;
 }
 
-.stevia-col-text {
-  font-family: 'Josefin Sans', sans-serif;
-  font-size: 1.4vw;
-  font-weight: 300;
-  color: white;
-  line-height: 1.7;
-  letter-spacing: 0;
-  text-wrap: balance;
-}
-
-.stevia-col-text strong {
-  font-weight: 700;
-}
-
 .stevia-list {
   list-style: none;
   padding: 0;
@@ -435,14 +428,10 @@ html, body {
   font-size: 5.8vw;
   line-height: 1.2;
   margin-bottom: 70px;
-  will-change: transform;
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
 }
 
 .pw {
   opacity: 0;
-  filter: blur(30px);
   display: inline-block;
 }
 
@@ -459,9 +448,6 @@ html, body {
   line-height: 1;
   padding-top: 0.25em;
   margin-top: -0.25em;
-  will-change: transform;
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
 }
 
 .product-post {
@@ -471,12 +457,14 @@ html, body {
   margin-top: 10px;
 }
 
-.product-tagline {
-  font-size: 2.2vw;
-  line-height: 1.4;
-  margin-top: 15px;
-  letter-spacing: 0.05em;
+.product-slogan {
+  text-transform: uppercase;
+  font-weight: 700;
 }
+
+#limao-kcal { color: #e8b000; }
+#morango-kcal { color: #d94452; }
+#maracuja-kcal { color: #6b2fa0; }
 
 .product-body {
   font-size: 1.4vw;
@@ -485,7 +473,7 @@ html, body {
   margin-top: 35px;
   letter-spacing: 0.03em;
   text-transform: none;
-  text-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
+  text-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 }
 
 .product-kcal {
@@ -501,11 +489,50 @@ html, body {
   display: inline-block;
   text-shadow: none;
   opacity: 0;
-  filter: blur(30px);
+}
+
+/* ── Desktop: split product layout ───────────────────── */
+@media (min-width: 769px) {
+  .product-layer img {
+    will-change: transform;
+  }
+
+  .product-text-layer {
+    justify-content: flex-start;
+    align-items: center;
+    padding-left: 8vw;
+  }
+
+  .product-text-wrapper {
+    text-align: left;
+    max-width: 40vw;
+  }
+
+  .product-name {
+    font-size: 5.8vw;
+  }
+
+  .product-pre {
+    font-size: 2.2vw;
+    margin-bottom: 20px;
+  }
+
+  .product-post {
+    font-size: 2.2vw;
+  }
+}
+
+.scroll-hint {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .hint-pointer { display: none; }
-.mobile-br { display: none; }
 
 .mobile-overlay {
   display: block;
@@ -524,7 +551,6 @@ html, body {
 @media (max-width: 768px) {
   .hint-mouse { display: none; }
   .hint-pointer { display: block; }
-  .mobile-br { display: block; }
 
   .product-kcal {
     font-size: 3vw;
@@ -533,10 +559,6 @@ html, body {
 
   .product-pre {
     margin-bottom: 15px;
-  }
-
-  .product-tagline {
-    font-size: 4.5vw;
   }
 
   .product-body {
@@ -555,7 +577,6 @@ html, body {
   .stevia-leaf { font-size: 10vw; }
   .stevia-desc { font-size: 3.5vw; }
   .stevia-subtitle { font-size: 3.5vw; }
-  .stevia-col-text { font-size: 3vw; }
   .stevia-list li { font-size: 3vw; }
   .stevia-table-footer { font-size: 3vw; }
 
